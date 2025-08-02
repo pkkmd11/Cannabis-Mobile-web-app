@@ -1,4 +1,4 @@
-import { type Product, type InsertProduct, type Sale, type InsertSale, type Audit, type InsertAudit } from "@shared/schema";
+import { type Product, type InsertProduct, type Sale, type InsertSale, type Audit, type InsertAudit, type AppSettings, type InsertAppSettings } from "@shared/schema";
 import { randomUUID } from "crypto";
 
 export interface IStorage {
@@ -13,6 +13,7 @@ export interface IStorage {
   getSales(): Promise<Sale[]>;
   getSale(id: string): Promise<Sale | undefined>;
   createSale(sale: InsertSale): Promise<Sale>;
+  updateSale(id: string, sale: Partial<InsertSale>): Promise<Sale>;
   getSalesByDateRange(startDate: string, endDate: string): Promise<Sale[]>;
   
   // Audits
@@ -20,17 +21,30 @@ export interface IStorage {
   getAudit(id: string): Promise<Audit | undefined>;
   createAudit(audit: InsertAudit): Promise<Audit>;
   updateAudit(id: string, audit: Partial<Audit>): Promise<Audit>;
+  
+  // App Settings
+  getAppSettings(): Promise<AppSettings>;
+  updateAppSettings(settings: InsertAppSettings): Promise<AppSettings>;
 }
 
 export class MemStorage implements IStorage {
   private products: Map<string, Product>;
   private sales: Map<string, Sale>;
   private audits: Map<string, Audit>;
+  private appSettings: AppSettings;
 
   constructor() {
     this.products = new Map();
     this.sales = new Map();
     this.audits = new Map();
+    this.appSettings = {
+      id: "default",
+      appName: "CannabisTrack",
+      logoUrl: "",
+      theme: "light",
+      language: "en",
+      updatedAt: new Date().toISOString(),
+    };
   }
 
   // Products
@@ -108,6 +122,35 @@ export class MemStorage implements IStorage {
     return sale;
   }
 
+  async updateSale(id: string, updateData: Partial<InsertSale>): Promise<Sale> {
+    const existingSale = this.sales.get(id);
+    if (!existingSale) {
+      throw new Error("Sale not found");
+    }
+    
+    // If quantity is being updated, adjust product quantity
+    if (updateData.quantity !== undefined && updateData.quantity !== existingSale.quantity) {
+      const product = this.products.get(existingSale.productId);
+      if (product) {
+        const quantityDiff = existingSale.quantity - updateData.quantity;
+        const updatedProduct = {
+          ...product,
+          quantity: product.quantity + quantityDiff,
+          updatedAt: new Date().toISOString(),
+        };
+        this.products.set(existingSale.productId, updatedProduct);
+      }
+    }
+    
+    const updatedSale: Sale = {
+      ...existingSale,
+      ...updateData,
+    };
+    
+    this.sales.set(id, updatedSale);
+    return updatedSale;
+  }
+
   async getSalesByDateRange(startDate: string, endDate: string): Promise<Sale[]> {
     const sales = Array.from(this.sales.values());
     return sales.filter(sale => 
@@ -150,6 +193,20 @@ export class MemStorage implements IStorage {
     
     this.audits.set(id, updatedAudit);
     return updatedAudit;
+  }
+
+  // App Settings
+  async getAppSettings(): Promise<AppSettings> {
+    return this.appSettings;
+  }
+
+  async updateAppSettings(settings: InsertAppSettings): Promise<AppSettings> {
+    this.appSettings = {
+      ...this.appSettings,
+      ...settings,
+      updatedAt: new Date().toISOString(),
+    };
+    return this.appSettings;
   }
 }
 

@@ -13,6 +13,7 @@ export const productSchema = z.object({
   harvestDate: z.string(),
   storageLocation: z.string(),
   productType: z.enum(["flower", "concentrate", "edible", "topical", "other"]),
+  supplier: z.string().min(1, "Supplier is required"),
   createdAt: z.string(),
   updatedAt: z.string(),
 });
@@ -41,6 +42,8 @@ export const insertSaleSchema = saleSchema.omit({
   createdAt: true,
 });
 
+export const updateSaleSchema = insertSaleSchema.partial();
+
 // Audit schema
 export const auditSchema = z.object({
   id: z.string(),
@@ -65,10 +68,28 @@ export const insertAuditSchema = auditSchema.omit({
   status: true,
 });
 
+// App settings schema
+export const appSettingsSchema = z.object({
+  id: z.string(),
+  appName: z.string().min(1, "App name is required"),
+  logoUrl: z.string().optional(),
+  theme: z.enum(["light", "dark"]),
+  language: z.enum(["en", "my", "th"]),
+  updatedAt: z.string(),
+});
+
+export const insertAppSettingsSchema = appSettingsSchema.omit({
+  id: true,
+  updatedAt: true,
+});
+
 // Types
 export type Product = z.infer<typeof productSchema>;
 export type InsertProduct = z.infer<typeof insertProductSchema>;
 export type Sale = z.infer<typeof saleSchema>;
 export type InsertSale = z.infer<typeof insertSaleSchema>;
+export type UpdateSale = z.infer<typeof updateSaleSchema>;
 export type Audit = z.infer<typeof auditSchema>;
 export type InsertAudit = z.infer<typeof insertAuditSchema>;
+export type AppSettings = z.infer<typeof appSettingsSchema>;
+export type InsertAppSettings = z.infer<typeof insertAppSettingsSchema>;

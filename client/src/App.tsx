@@ -17,6 +17,7 @@ import Inventory from "@/pages/inventory";
 import Sales from "@/pages/sales";
 import Reports from "@/pages/reports";
 import Audits from "@/pages/audits";
+import Settings from "@/pages/settings";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -27,6 +28,7 @@ function Router() {
       <Route path="/sales" component={Sales} />
       <Route path="/reports" component={Reports} />
       <Route path="/audits" component={Audits} />
+      <Route path="/settings" component={Settings} />
       <Route component={NotFound} />
     </Switch>
   );

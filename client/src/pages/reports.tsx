@@ -43,10 +43,16 @@ export default function Reports() {
   });
 
   useEffect(() => {
-    if (chartRef.current && window.Chart) {
+    if (chartRef.current && (window as any).Chart) {
       const ctx = chartRef.current.getContext('2d');
       if (ctx) {
-        new window.Chart(ctx, {
+        // Destroy existing chart if it exists
+        const existingChart = (window as any).Chart.getChart(ctx);
+        if (existingChart) {
+          existingChart.destroy();
+        }
+
+        new (window as any).Chart(ctx, {
           type: 'line',
           data: {
             labels: last7Days.map(date => new Date(date).toLocaleDateString('en-US', { weekday: 'short' })),
@@ -71,7 +77,7 @@ export default function Reports() {
               y: {
                 beginAtZero: true,
                 ticks: {
-                  callback: function(value) {
+                  callback: function(value: any) {
                     return '$' + value;
                   }
                 }

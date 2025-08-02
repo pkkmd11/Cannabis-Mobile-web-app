@@ -1,6 +1,6 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { insertSaleSchema, type InsertSale, type Product } from "@shared/schema";
+import { insertSaleSchema, updateSaleSchema, type InsertSale, type UpdateSale, type Product, type Sale } from "@shared/schema";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -11,26 +11,39 @@ import { useEffect, useState } from "react";
 
 interface SaleFormProps {
   products: Product[];
-  onSubmit: (data: InsertSale) => void;
+  sale?: Sale; // For editing mode
+  onSubmit: (data: InsertSale | UpdateSale) => void;
+  onCancel?: () => void;
   isLoading?: boolean;
 }
 
-export function SaleForm({ products, onSubmit, isLoading }: SaleFormProps) {
+export function SaleForm({ products, sale, onSubmit, onCancel, isLoading }: SaleFormProps) {
   const { t } = useI18n();
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const isEditMode = !!sale;
   
   const form = useForm<InsertSale>({
-    resolver: zodResolver(insertSaleSchema),
+    resolver: zodResolver(isEditMode ? updateSaleSchema : insertSaleSchema),
     defaultValues: {
-      productId: "",
-      quantity: 0,
-      unitPrice: 0,
-      totalAmount: 0,
-      customerInfo: "",
-      batchNumber: "",
-      saleDate: new Date().toISOString(),
+      productId: sale?.productId || "",
+      quantity: sale?.quantity || 0,
+      unitPrice: sale?.unitPrice || 0,
+      totalAmount: sale?.totalAmount || 0,
+      customerInfo: sale?.customerInfo || "",
+      batchNumber: sale?.batchNumber || "",
+      saleDate: sale?.saleDate || new Date().toISOString(),
     },
   });
+
+  // Set selected product when in edit mode
+  useEffect(() => {
+    if (sale) {
+      const product = products.find(p => p.id === sale.productId);
+      if (product) {
+        setSelectedProduct(product);
+      }
+    }
+  }, [sale, products]);
 
   const quantity = form.watch("quantity");
   const unitPrice = form.watch("unitPrice");
@@ -52,8 +65,10 @@ export function SaleForm({ products, onSubmit, isLoading }: SaleFormProps) {
 
   const handleSubmit = (data: InsertSale) => {
     onSubmit(data);
-    form.reset();
-    setSelectedProduct(null);
+    if (!isEditMode) {
+      form.reset();
+      setSelectedProduct(null);
+    }
   };
 
   const availableProducts = products.filter(p => p.quantity > 0);
@@ -61,7 +76,7 @@ export function SaleForm({ products, onSubmit, isLoading }: SaleFormProps) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>{t("sales.new_sale")}</CardTitle>
+        <CardTitle>{isEditMode ? t("sales.edit_sale") : t("sales.new_sale")}</CardTitle>
       </CardHeader>
       <CardContent>
         <Form {...form}>
@@ -160,13 +175,26 @@ export function SaleForm({ products, onSubmit, isLoading }: SaleFormProps) {
               </p>
             </div>
 
-            <Button 
-              type="submit" 
-              className="w-full bg-cannabis-primary hover:bg-cannabis-dark"
-              disabled={isLoading || !selectedProduct || quantity <= 0}
-            >
-              {isLoading ? t("common.loading") : t("sales.complete_sale")}
-            </Button>
+            <div className="flex space-x-2">
+              {isEditMode && onCancel && (
+                <Button 
+                  type="button" 
+                  variant="outline"
+                  onClick={onCancel}
+                  className="flex-1"
+                  disabled={isLoading}
+                >
+                  {t("common.cancel")}
+                </Button>
+              )}
+              <Button 
+                type="submit" 
+                className={`${isEditMode ? 'flex-1' : 'w-full'} bg-cannabis-primary hover:bg-cannabis-dark`}
+                disabled={isLoading || !selectedProduct || quantity <= 0}
+              >
+                {isLoading ? t("common.loading") : (isEditMode ? t("sales.update_sale") : t("sales.complete_sale"))}
+              </Button>
+            </div>
           </form>
         </Form>
       </CardContent>

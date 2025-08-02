@@ -33,6 +33,7 @@ export function ProductForm({ product, onSubmit, onCancel, isLoading }: ProductF
       harvestDate: product.harvestDate,
       storageLocation: product.storageLocation,
       productType: product.productType,
+      supplier: product.supplier,
     } : {
       strainName: "",
       batchNumber: "",
@@ -44,6 +45,7 @@ export function ProductForm({ product, onSubmit, onCancel, isLoading }: ProductF
       harvestDate: "",
       storageLocation: "",
       productType: "flower",
+      supplier: "",
     },
   });
 
@@ -184,11 +186,11 @@ export function ProductForm({ product, onSubmit, onCancel, isLoading }: ProductF
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      <SelectItem value="flower">Flower</SelectItem>
-                      <SelectItem value="concentrate">Concentrate</SelectItem>
-                      <SelectItem value="edible">Edible</SelectItem>
-                      <SelectItem value="topical">Topical</SelectItem>
-                      <SelectItem value="other">Other</SelectItem>
+                      <SelectItem value="flower">{t("inventory.product_types.flower")}</SelectItem>
+                      <SelectItem value="concentrate">{t("inventory.product_types.concentrate")}</SelectItem>
+                      <SelectItem value="edible">{t("inventory.product_types.edible")}</SelectItem>
+                      <SelectItem value="topical">{t("inventory.product_types.topical")}</SelectItem>
+                      <SelectItem value="other">{t("inventory.product_types.other")}</SelectItem>
                     </SelectContent>
                   </Select>
                   <FormMessage />
@@ -234,6 +236,20 @@ export function ProductForm({ product, onSubmit, onCancel, isLoading }: ProductF
                   <FormLabel>{t("inventory.storage_location")}</FormLabel>
                   <FormControl>
                     <Input {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="supplier"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>{t("inventory.supplier")}</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Enter supplier name" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
