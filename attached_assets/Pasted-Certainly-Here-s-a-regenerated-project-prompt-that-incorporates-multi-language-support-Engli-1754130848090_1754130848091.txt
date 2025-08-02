@@ -1,0 +1,112 @@
+Certainly! Here's a **regenerated project prompt** that incorporates **multi-language support (English, Myanmar, Thai)** along with your original requirements, plus enhancements from the previous suggestions:
+
+---
+
+## 📝 **Regenerated Prompt for Cannabis Inventory and Sales Tracking App (Offline, Multilingual)**
+
+### 🎯 **Project Overview**
+
+Design and develop a **cross-platform mobile app** (Android and iOS) for **cannabis inventory and sales tracking**, using **Flutter with Dart**. The app must function **entirely offline**, using **SQLite** for local storage, and include **multilingual support** for **English, Myanmar (မြန်မာ), and Thai (ไทย)**.
+
+The app will support cannabis retailers in managing products, recording sales, conducting audits, and generating reports — all in compliance with cannabis industry regulations. The user interface must be simple, intuitive, and accessible to users in different regions and languages.
+
+---
+
+### 🧱 **Framework and Architecture**
+
+* **Frontend**: Flutter (Dart)
+* **Database**: Local SQLite (with Drift/Moor or sqflite)
+* **State Management**: Riverpod (preferred), or Provider
+* **Offline-first** with optional future support for data sync
+* **Multi-language support** via `flutter_localizations` and `intl` packages
+
+---
+
+### 📦 **Core Features**
+
+#### 🔹 1. Inventory Management
+
+* Add, update, and delete products
+* Fields: strain name, batch number, THC/CBD levels, quantity, expiry date, storage location
+* Barcode/QR code scanning for fast lookup
+* Track low stock and expired products
+
+#### 🔹 2. Sales Tracking
+
+* Record offline sales transactions
+* View detailed sales history
+* Prevent overselling (quantity check)
+* Real-time update to inventory on sale
+* Optional receipt printing via Bluetooth printer
+
+#### 🔹 3. Inventory Audits
+
+* Conduct physical counts and compare to system inventory
+* Save audit logs with timestamps and discrepancies
+* Maintain compliance with local laws (e.g., California monthly audits)
+
+#### 🔹 4. Reporting
+
+* Generate reports for:
+
+  * Current inventory
+  * Sales summary (daily/weekly/monthly)
+  * Audit history
+* Export to **PDF** or **CSV**
+* Visual charts (e.g., sales trends, stock levels) using `fl_chart`
+
+#### 🔹 5. Multilingual Support
+
+* Full app localization for:
+
+  * **English**
+  * **Myanmar (မြန်မာဘာသာ)**
+  * **Thai (ภาษาไทย)**
+* Store all UI strings in `.arb` files with `intl`
+* Language selector on first launch and in settings
+
+---
+
+### 📱 **User Interface and UX**
+
+* **Bottom navigation bar**: Home | Inventory | Sales | Reports | Audits
+* Floating Action Button (FAB) on each screen for primary actions
+* Responsive layout for different screen sizes
+* Subdued color scheme (greens, grays) for a professional cannabis theme
+* Toasts and dialogs for user feedback (e.g., "Product added", "Insufficient stock")
+
+---
+
+### 🔐 **Security & Compliance**
+
+* Local data encryption (e.g., SQLCipher)
+* Optional PIN code or biometric authentication
+* Fields for traceability: batch number, harvest date
+* Audit log history for compliance verification
+* Optional sync interface for future Metrc integration
+
+---
+
+### 🔄 **Future-Ready Features (Optional)**
+
+* Cloud sync with remote API (e.g., Firebase, Supabase, Django REST)
+* Role-based multi-user access (Manager, Staff)
+* Notifications for low stock and audit reminders
+* Cloud or local backup/restore
+* Bluetooth printer support
+
+---
+
+## ✅ **Goal**
+
+Build a scalable, offline-first mobile app that allows cannabis retailers to manage inventory and sales in compliance with industry standards — **accessible to users in English, Myanmar, and Thai**, with strong UX, local database support, and readiness for future expansion.
+
+---
+
+Would you like:
+
+* A folder structure for Flutter to support these features?
+* A basic `intl_en.arb`, `intl_my.arb`, and `intl_th.arb` file example?
+* UI wireframes or SQLite schema design next?
+
+Let me know where you'd like to go from here.
